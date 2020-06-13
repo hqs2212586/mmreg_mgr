@@ -5,7 +5,7 @@
     <el-table v-loading="loading" :data="data" size="small" border style="width: 100%;">
       <el-table-column label="头像" width="50px">
         <template slot-scope="scope">
-          <img :src="scope.row.image" class="el-avatar">
+          <img :src="scope.row.avatar" class="el-avatar">
         </template>
       </el-table-column>
       <el-table-column prop="username" label="用户名" width="150px"/>
