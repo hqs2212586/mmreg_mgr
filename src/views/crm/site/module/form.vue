@@ -1,24 +1,14 @@
 <template>
-  <el-dialog :append-to-body="true" :visible.sync="dialog" :title="isAdd ? '新增学校' : '编辑学校'" width="500px">
+  <el-dialog :append-to-body="true" :visible.sync="dialog" :title="isAdd ? '新增站点' : '编辑站点'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="66px">
       <el-form-item label="名称" prop="title">
         <el-input v-model="form.title" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="Logo" prop="logo">
-        <el-upload
-          :show-file-list="false"
-          :before-upload="beforeLogoUpload"
-          :on-success="handleLogoSuccess"
-          :on-error="handleLogoError"
-          :headers="headers"
-          action=""
-          class="logo-uploader">
-          <img v-if="form.logo" :src="form.logo" title="点击上传logo" class="logo">
-          <i v-else class="el-icon-plus avatar-uploader-icon"/>
-        </el-upload>
+      <el-form-item label="学校">
+        <treeselect v-model="form.schools" :options="schoolList" style="width: 370px;" placeholder="请选择所属学校" />
       </el-form-item>
       <el-form-item style="margin-bottom: 0px;" label="组织">
-        <treeselect v-model="form.organization" :options="organizations" style="width: 360px;" placeholder="请选择组织架构" />
+        <treeselect v-model="form.organization" :options="organizations" style="width: 370px;" placeholder="请选择组织架构" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -29,11 +19,10 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/school'
+import { add, edit } from '@/api/site'
 import { getToken } from '@/utils/auth'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import { getOrganizationTree } from '@/api/organization'
 
 export default {
   components: { Treeselect },
@@ -45,15 +34,23 @@ export default {
     sup_this: {
       type: Object,
       default: null
+    },
+    organizations: {
+      type: Array,
+      required: true
+    },
+    schoolList: {
+      type: Array,
+      required: true
     }
   },
   data() {
     return {
-      organizations: [],
-      loading: false, dialog: false,
+      loading: false,
+      dialog: false,
       form: {
         title: '',
-        logo: null,
+        schools: null,
         organization: null
       },
       rules: {
@@ -66,15 +63,7 @@ export default {
       }
     }
   },
-  created() {
-    this.getOrganizations();
-  },
   methods: {
-    getOrganizations() {
-      getOrganizationTree().then(res => {
-        this.organizations = res.detail
-      })
-    },
     cancel() {
       this.resetForm()
     },
@@ -122,40 +111,10 @@ export default {
         console.log(err)
       })
     },
-    beforeLogoUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isPNG = file.type === 'image/png';
-      const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isJPG && !isPNG) {
-        this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
-      }
-      return isJPG && isLt2M;
-    },
-    handleLogoSuccess(response, file, fileList) {
-      this.$notify({
-        title: 'Logo上传成功',
-        type: 'success',
-        duration: 2500
-      })
-      this.form.logo = URL.createObjectURL(file.raw)
-    },
-    // 监听上传失败
-    handleLogoError(e, file, fileList) {
-      const msg = JSON.parse(e.message)
-      this.$notify({
-        title: msg.message,
-        type: 'error',
-        duration: 2500
-      })
-    },
     resetForm() {
       this.dialog = false
       this.$refs['form'].resetFields()
-      this.form = { title: '', logo: null, organization: null}
+      this.form = { title: '', schools: null, organization: null}
     }
   }
 }

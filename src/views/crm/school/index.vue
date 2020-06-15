@@ -5,6 +5,11 @@
       <el-col :span="span">
         <!--表格渲染-->
         <tree-table v-loading="loading" :data="schools" :expand-all="true" :columns="columns" border size="small">
+          <el-table-column label="学校logo" width="160px">
+            <template slot-scope="scope">
+              <img :src="scope.row.logo" class="el-avatar">
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="150px" align="center">
             <template slot-scope="scope">
               <edit v-if="checkPermission(['admin','school_all','school_edit'])" :schools="schools" :data="scope.row" :sup_this="sup_this"/>
@@ -53,14 +58,14 @@ export default {
           text: '学校名称',
           value: 'title'
         },
-        {
-          text: '学校Logo',
-          value: 'logo'
-        },
-        {
-          text: '组织层级',
-          value: 'organization'
-        },
+        // {
+        //   text: '学校Logo',
+        //   value: 'logo'
+        // },
+        // {
+        //   text: '组织层级',
+        //   value: 'organization'
+        // },
         {
           text: '创建时间',
           value: 'add_time'
