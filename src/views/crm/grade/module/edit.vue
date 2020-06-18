@@ -26,6 +26,9 @@ export default {
       required: true
     }
   },
+  created() {
+    console.log(this.grades);
+  },
   methods: {
     to() {
       const _this = this.$refs.form
@@ -33,6 +36,8 @@ export default {
         id: this.data.id,
         title: this.data.title,
         schools: this.data.schools,
+        begin_time: this.data.begin_time,
+        end_time: this.data.end_time,
         status: this.data.status
       }
       _this.dialog = true

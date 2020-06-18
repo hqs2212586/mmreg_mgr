@@ -4,7 +4,7 @@
     <el-row :gutter="28">
       <el-col :span="span">
         <!--表格渲染-->
-        <tree-table v-loading="loading" :data="grades" :expand-all="true" :columns="columns" border size="small">
+        <tree-table v-loading="loading" :data="grades" :columns="columns" :expand-all="true" border size="small">
           <el-table-column label="操作" width="150px" align="center">
             <template slot-scope="scope">
               <edit v-if="checkPermission(['admin','grade_all','grade_edit'])" :grades="grades" :schoolList="schoolList" :data="scope.row" :sup_this="sup_this"/>
@@ -55,24 +55,36 @@ export default {
           text: '名称',
           value: 'title'
         },
+        // {
+        //   text: '学校',
+        //   value: 'schools'
+        // },
         {
-          text: '创建时间',
-          value: 'add_time'
+          text: '开始日期',
+          value: 'begin_time'
         },
         {
-          text: '更新时间',
-          value: 'modify_time'
-        }
+          text: '结束日期',
+          value: 'end_time'
+        },
+        // {
+        //   text: '创建时间',
+        //   value: 'add_time'
+        // },
+        // {
+        //   text: '更新时间',
+        //   value: 'modify_time'
+        // }
       ],
       span: 24,
       delLoading: false,
       sup_this: this,
       grades: [],
+      gradeList: [],
       schoolList: []
     }
   },
   created() {
-    this.getGradeList();
     this.getSchoolList();
     this.$nextTick(() => {
       this.init(
@@ -82,6 +94,13 @@ export default {
   },
   methods: {
     parseTime,
+    dateFormat: function(row, column) {
+      var date = row[column.property];
+      if (date === undefined) {
+        return '';
+      }
+      return parseTime(date)
+    },
     checkPermission,
     handleCurrentChange(val) {
       console.log(val);
@@ -116,24 +135,37 @@ export default {
         console.log(err)
       })
     },
-    getGradeList() {
-      let self = this;
-      getGrades().then(res => {
-        for (var i=0; i < res.results.length; i++) {
-          res.results[i].add_time = self.parseTime(res.results[i].add_time)
-          res.results[i].modify_time = self.parseTime(res.results[i].modify_time)
-        }
-        console.log(res);
-        self.grades = res.results;
-      })
-    },
     getSchoolList() {
+      let self = this;
       getSchools().then(res => {
         const newres = res.results.map(item => {
           return { ...item, label: item.title }
         })
-        console.log(newres);
-        this.schoolList = newres
+        self.schoolList = newres;
+        self.getGradeList()
+      })
+    },
+    getGradeList() {
+      let self = this;
+      getGrades().then(res => {
+        console.log(self.schoolList);
+        self.grades = res.results;
+        self.gradeList = JSON.parse(JSON.stringify(self.grades));
+
+        // 为了将学校的id转为名称
+        for (var i=0; i < self.gradeList.length; i++) {
+          for (var j=0; j < self.schoolList.length; j++) {
+            if (self.gradeList[i].schools === self.schoolList[j].id) {
+              self.gradeList[i].schools = self.schoolList[j].title
+            }
+          }
+          self.gradeList[i].begin_time = self.parseTime(self.gradeList[i].begin_time);
+          self.gradeList[i].end_time = self.parseTime(self.gradeList[i].end_time);
+          self.gradeList[i].add_time = self.parseTime(self.gradeList[i].add_time);
+          self.gradeList[i].modify_time = self.parseTime(self.gradeList[i].modify_time);
+        }
+        console.log('#####', self.grades);
+        console.log(self.gradeList)
       })
     }
   }

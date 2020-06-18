@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-button :disabled="data.id === 1" size="mini" type="success" @click="to">编辑</el-button>
-    <eForm ref="form" :menus="menus" :sup_this="sup_this" :is-add="false"/>
+    <el-button size="mini" type="success" @click="to">编辑</el-button>
+    <eForm ref="form" :enroll_students="enroll_students" :sup_this="sup_this" :is-add="false"/>
   </div>
 </template>
 <script>
@@ -17,7 +17,7 @@ export default {
       type: Object,
       required: true
     },
-    menus: {
+    enroll_students: {
       type: Array,
       required: true
     }
@@ -27,14 +27,8 @@ export default {
       const _this = this.$refs.form
       _this.form = {
         id: this.data.id,
-        component: this.data.component,
-        name: this.data.name,
-        sort: this.data.sort,
-        pid: this.data.pid,
-        path: this.data.path,
-        is_show: this.data.is_show.toString(),
-        is_frame: this.data.is_frame.toString(),
-        icon: this.data.icon }
+        name: this.data.name
+      }
       _this.dialog = true
     }
   }

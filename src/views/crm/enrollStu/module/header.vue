@@ -6,13 +6,13 @@
     <!-- 新增 -->
     <div style="display: inline-block;margin: 0px 2px;">
       <el-button
-        v-if="checkPermission(['admin','menu_all','menu_create'])"
+        v-if="checkPermission(['admin','enrollstu_all','enrollstu_create'])"
         class="filter-item"
         size="mini"
         type="primary"
         icon="el-icon-plus"
         @click="$refs.form.dialog = true">新增</el-button>
-      <eForm ref="form" :menus="menus" :is-add="true"/>
+      <eForm ref="form" :enroll_students="enroll_students" :is-add="true"/>
     </div>
   </div>
 </template>
@@ -27,7 +27,7 @@ export default {
       type: Object,
       required: true
     },
-    menus: {
+    enroll_students: {
       type: Array,
       required: true
     }

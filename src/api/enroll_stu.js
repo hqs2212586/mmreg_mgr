@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 // 获取所有的报名学生
-export function getStudents() {
+export function getEnrollStudents() {
   return request({
     url: 'api/crm/students/',
     method: 'get'

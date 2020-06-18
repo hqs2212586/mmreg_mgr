@@ -1,41 +1,36 @@
 <template>
-  <el-dialog :append-to-body="true" :visible.sync="dialog" :title="isAdd ? '新增菜单' : '编辑菜单'" width="600px">
-    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="是否显示" prop="is_show">
-        <el-radio v-model="form.is_show" label="true">是</el-radio>
-        <el-radio v-model="form.is_show" label="false" >否</el-radio>
+  <el-dialog :append-to-body="true" :visible.sync="dialog" :title="isAdd ? '新增报名学生' : '编辑报名学生'" width="500px">
+    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="78px">
+      <el-form-item label="姓名" prop="title">
+        <el-input v-model="form.name" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item v-if="form.is_show === 'true'" label="菜单图标" prop="icon">
-        <el-popover
-          placement="bottom-start"
-          width="460"
-          trigger="click"
-          @show="$refs['iconSelect'].reset()">
-          <IconSelect ref="iconSelect" @selected="selected" />
-          <el-input slot="reference" v-model="form.icon" style="width: 460px;" placeholder="点击选择图标" readonly>
-            <svg-icon v-if="form.icon" slot="prefix" :icon-class="form.icon" class="el-input__icon" style="height: 32px;width: 16px;" />
-            <i v-else slot="prefix" class="el-icon-search el-input__icon"/>
-          </el-input>
-        </el-popover>
+      <el-form-item label="性别">
+        <el-radio-group v-model="form.gender">
+          <el-radio :label=0>男</el-radio>
+          <el-radio :label=1>女</el-radio>
+        </el-radio-group>
       </el-form-item>
-      <el-form-item label="菜单名称" prop="name">
-        <el-input v-model="form.name" placeholder="名称" style="width: 460px;"/>
+      <el-form-item label="民族" prop="nation">
+        <el-input v-model="form.nation" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="菜单排序" prop="sort">
-        <el-input v-model.number="form.sort" placeholder="序号越小越靠前" style="width: 460px;"/>
+      <el-form-item label="籍贯" prop="birth_place">
+        <el-input v-model="form.birth_place" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="内部菜单" prop="is_frame">
-        <el-radio v-model="form.is_frame" label="false">是</el-radio>
-        <el-radio v-model="form.is_frame" label="true" >否</el-radio>
+      <el-form-item label="身份证号" prop="identity_num">
+        <el-input v-model="form.identity_num" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="链接地址">
-        <el-input v-model="form.path" placeholder="菜单路径" style="width: 460px;"/>
+      <el-form-item label="常用地址" prop="address">
+        <el-input v-model="form.address" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item v-if="form.is_frame === 'false'" label="组件路径">
-        <el-input v-model="form.component" placeholder="组件路径" style="width: 460px;"/>
+      <el-form-item label="手机号" prop="tel">
+        <el-input v-model="form.tel" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="父级菜单">
-        <treeselect v-model="form.pid" :options="menus" style="width: 460px;" placeholder="请选择父级菜单" />
+      <el-form-item label="报读专业" prop="majors">
+        <el-input v-model="form.majors" style="width: 370px;"/>
+      </el-form-item>
+
+      <el-form-item label="备注" prop="memo">
+        <el-input v-model="form.memo" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -46,17 +41,14 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/menu'
+import { add, edit } from '@/api/train_type'
+import { getToken } from '@/utils/auth'
 import Treeselect from '@riophae/vue-treeselect'
-import IconSelect from '@/components/IconSelect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
 export default {
-  components: { Treeselect, IconSelect },
+  components: { Treeselect },
   props: {
-    menus: {
-      type: Array,
-      required: true
-    },
     isAdd: {
       type: Boolean,
       required: true
@@ -64,25 +56,34 @@ export default {
     sup_this: {
       type: Object,
       default: null
+    },
+    enroll_students: {
+      type: Array,
+      required: true
     }
   },
   data() {
     return {
-      loading: false, dialog: false,
-      form: { name: '', sort: 999, path: '', component: '', is_show: 'true', is_frame: 'false', pid: null, icon: '' },
+      loading: false,
+      dialog: false,
+      form: {
+        name: '',
+        gender: 0,
+        nation: '',
+        birth_place: '',
+        identity_num: '',
+        address: '',
+        tel: '',
+        majors: '',
+        memo: ''
+      },
       rules: {
-        is_show: [
-          { required: true, message: '是否在导航栏显示', trigger: 'blur' }
-        ],
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' }
-        ],
-        sort: [
-          { required: true, message: '请输入序号', trigger: 'blur', type: 'number' }
-        ],
-        is_frame: [
-          { required: true, message: '请选择菜单类型', trigger: 'blur' }
         ]
+      },
+      headers: {
+        'Authorization': 'Bearer ' + getToken()
       }
     }
   },
@@ -113,7 +114,6 @@ export default {
         })
         this.loading = false
         this.$parent.$parent.init()
-        this.$parent.$parent.getMenus()
       }).catch(err => {
         this.loading = false
         console.log(err)
@@ -130,7 +130,6 @@ export default {
         })
         this.loading = false
         this.sup_this.init()
-        this.sup_this.getMenus()
       }).catch(err => {
         this.loading = false
         console.log(err)
@@ -139,15 +138,34 @@ export default {
     resetForm() {
       this.dialog = false
       this.$refs['form'].resetFields()
-      this.form = { name: '', sort: 999, path: '', component: '', is_show: 'true', is_frame: 'false', pid: null, icon: '' }
-    },
-    selected(name) {
-      this.form.icon = name
+      this.form = { title: ''}
     }
   }
 }
 </script>
 
 <style scoped>
-
+  .logo-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .logo-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .logo-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 148px;
+    height: 148px;
+    line-height: 148px;
+    text-align: center;
+  }
+  .logo {
+    width: 148px;
+    height: 148px;
+    display: block;
+  }
 </style>
