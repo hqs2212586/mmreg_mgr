@@ -13,9 +13,7 @@
           list-type="picture-card"
           :on-change="handleLogoChange"
           :on-preview="handleLogoPreview"
-          :on-remove="handleRemove"
-          :class="{'hide': hideUploadAdd}"
-          >
+          :on-remove="handleRemove">
           <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
@@ -57,8 +55,8 @@ export default {
       organizations: [],
       loading: false,
       dialog: false,
-      dialogImageUrl: '',
-      dialogVisible: false,
+      dialogImageUrl: '',     // 详情图片地址
+      dialogVisible: false,   // 详情图是否可见
       hideUploadAdd: false,
       fileListAdd: [],
       form: {
@@ -111,7 +109,6 @@ export default {
       this.fileListAdd.map(item => {      // 给logo键添加文件内容
         formData.append('logo', item.raw);
       });
-      console.log(formData);
       add(formData).then(res => {
         console.log('上传', res);
         this.resetForm()
@@ -129,7 +126,18 @@ export default {
       })
     },
     doEdit() {
-      edit(this.form.id, this.form).then(res => {
+      let self = this;
+      let formData = new FormData();
+      for (let key in this.form) {
+        if (this.form[key] != null) {     // 抛出为null的logo字段
+          formData.append(key, this.form[key]);
+        }
+      }
+      this.fileListAdd.map(item => {      // 给logo键添加文件内容
+        formData.append('logo', item.raw);
+      });
+
+      edit(this.form.id, formData).then(res => {
         this.resetForm()
         this.$message({
           showClose: true,

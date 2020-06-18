@@ -5,9 +5,19 @@
       <el-col :span="span">
         <!--表格渲染-->
         <tree-table v-loading="loading" :data="schools" :expand-all="true" :columns="columns" border size="small">
-          <el-table-column label="学校logo" width="160px">
+          <el-table-column label="学校logo" width="150px">
             <template slot-scope="scope">
               <img :src="scope.row.logo" class="el-avatar">
+            </template>
+          </el-table-column>
+          <el-table-column label="创建时间" width="175px">
+            <template slot-scope="scope">
+              <span>{{parseTime(scope.row.add_time)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="更新时间" width="175px">
+            <template slot-scope="scope">
+              <span>{{parseTime(scope.row.modify_time)}}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="150px" align="center">
@@ -57,24 +67,7 @@ export default {
         {
           text: '学校名称',
           value: 'title'
-        },
-        // {
-        //   text: '学校Logo',
-        //   value: 'logo'
-        // },
-        // {
-        //   text: '组织层级',
-        //   value: 'organization'
-        // },
-        {
-          text: '创建时间',
-          value: 'add_time'
-        },
-        {
-          text: '更新时间',
-          value: 'modify_time'
         }
-
       ],
       span: 24,
       delLoading: false,
@@ -129,11 +122,6 @@ export default {
     getSchoolList() {
       let self = this;
       getSchools().then(res => {
-        for (var i=0; i < res.results.length; i++) {
-          res.results[i].add_time = self.parseTime(res.results[i].add_time)
-          res.results[i].modify_time = self.parseTime(res.results[i].modify_time)
-        }
-        // console.log(res);
         self.schools = res.results;
       })
     }

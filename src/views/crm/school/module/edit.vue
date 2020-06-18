@@ -24,14 +24,15 @@ export default {
   },
   methods: {
     to() {
-      const _this = this.$refs.form
+      const _this = this.$refs.form;
       _this.form = {
         id: this.data.id,
         title: this.data.title,
         logo: this.data.logo,
         organization: this.data.organization
       }
-      _this.dialog = true
+      _this.dialog = true;
+
     }
   }
 }
