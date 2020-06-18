@@ -133,7 +133,7 @@ export default {
           res.results[i].add_time = self.parseTime(res.results[i].add_time)
           res.results[i].modify_time = self.parseTime(res.results[i].modify_time)
         }
-        console.log(res);
+        // console.log(res);
         self.schools = res.results;
       })
     }

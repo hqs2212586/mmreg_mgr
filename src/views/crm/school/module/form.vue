@@ -6,16 +6,21 @@
       </el-form-item>
       <el-form-item label="Logo" prop="logo">
         <el-upload
-          :show-file-list="false"
-          :before-upload="beforeLogoUpload"
-          :on-success="handleLogoSuccess"
-          :on-error="handleLogoError"
-          :headers="headers"
           action=""
-          class="logo-uploader">
-          <img v-if="form.logo" :src="form.logo" title="点击上传logo" class="logo">
-          <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          :limit="1"
+          :file-list="fileListAdd"
+          :auto-upload="false"
+          list-type="picture-card"
+          :on-change="handleLogoChange"
+          :on-preview="handleLogoPreview"
+          :on-remove="handleRemove"
+          :class="{'hide': hideUploadAdd}"
+          >
+          <i class="el-icon-plus"></i>
         </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt="">
+        </el-dialog>
       </el-form-item>
       <el-form-item style="margin-bottom: 0px;" label="组织">
         <treeselect v-model="form.organization" :options="organizations" style="width: 360px;" placeholder="请选择组织架构" />
@@ -50,7 +55,12 @@ export default {
   data() {
     return {
       organizations: [],
-      loading: false, dialog: false,
+      loading: false,
+      dialog: false,
+      dialogImageUrl: '',
+      dialogVisible: false,
+      hideUploadAdd: false,
+      fileListAdd: [],
       form: {
         title: '',
         logo: null,
@@ -91,7 +101,19 @@ export default {
       })
     },
     doAdd() {
-      add(this.form).then(res => {
+      let self = this;
+      let formData = new FormData();
+      for (let key in this.form) {
+        if (this.form[key] != null) {     // 抛出为null的logo字段
+          formData.append(key, this.form[key]);
+        }
+      }
+      this.fileListAdd.map(item => {      // 给logo键添加文件内容
+        formData.append('logo', item.raw);
+      });
+      console.log(formData);
+      add(formData).then(res => {
+        console.log('上传', res);
         this.resetForm()
         this.$message({
           showClose: true,
@@ -122,35 +144,31 @@ export default {
         console.log(err)
       })
     },
-    beforeLogoUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isPNG = file.type === 'image/png';
-      const isLt2M = file.size / 1024 / 1024 < 2;
+    handleLogoChange(file, fileList) {
+      // 图片类型限制
+      const isJPG = file.raw.type === 'image/jpeg';
+      const isPNG = file.raw.type === 'image/png';
+      // 图片大小限制
+      const isLt2M = file.raw.size / 1024 / 1024 < 2;
 
       if (!isJPG && !isPNG) {
         this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
-      }
-      if (!isLt2M) {
+      } else if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 2MB!');
+      } else {
+        console.log(fileList);
+        this.fileListAdd = fileList;
       }
-      return isJPG && isLt2M;
+      if (fileList.length > 0) {
+        this.hideUploadAdd = true;
+      }
     },
-    handleLogoSuccess(response, file, fileList) {
-      this.$notify({
-        title: 'Logo上传成功',
-        type: 'success',
-        duration: 2500
-      })
-      this.form.logo = URL.createObjectURL(file.raw)
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
     },
-    // 监听上传失败
-    handleLogoError(e, file, fileList) {
-      const msg = JSON.parse(e.message)
-      this.$notify({
-        title: msg.message,
-        type: 'error',
-        duration: 2500
-      })
+    handleLogoPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
     resetForm() {
       this.dialog = false
