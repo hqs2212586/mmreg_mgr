@@ -104,7 +104,7 @@ export default {
     font-style: normal;
     font-weight: 400;
     line-height: 1;
-    width: $space-width;
+    /*width: $space-width;*/
     height: 14px;
     &::before {
       content: ""

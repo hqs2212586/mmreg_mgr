@@ -1,14 +1,8 @@
 <template>
-  <el-dialog :append-to-body="true" :visible.sync="dialog" :title="isAdd ? '新增站点' : '编辑站点'" width="500px">
+  <el-dialog :append-to-body="true" :visible.sync="dialog" :title="isAdd ? '新增录取学生' : '编辑录取学生'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="66px">
       <el-form-item label="名称" prop="title">
         <el-input v-model="form.title" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="学校">
-        <treeselect v-model="form.schools" :options="schoolList" style="width: 370px;" placeholder="请选择所属学校" />
-      </el-form-item>
-      <el-form-item style="margin-bottom: 0px;" label="组织">
-        <treeselect v-model="form.organization" :options="organizations" style="width: 370px;" placeholder="请选择组织架构" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -19,7 +13,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/site'
+import { add, edit } from '@/api/train_type'
 import { getToken } from '@/utils/auth'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -35,11 +29,7 @@ export default {
       type: Object,
       default: null
     },
-    organizations: {
-      type: Array,
-      required: true
-    },
-    schoolList: {
+    train_types: {
       type: Array,
       required: true
     }
@@ -49,9 +39,7 @@ export default {
       loading: false,
       dialog: false,
       form: {
-        title: '',
-        schools: null,
-        organization: null
+        title: ''
       },
       rules: {
         title: [
@@ -62,11 +50,6 @@ export default {
         'Authorization': 'Bearer ' + getToken()
       }
     }
-  },
-  created() {
-    console.log(this.form);
-    console.log(this.schoolList);
-    console.log(this.organizations);
   },
   methods: {
     cancel() {
@@ -119,7 +102,7 @@ export default {
     resetForm() {
       this.dialog = false
       this.$refs['form'].resetFields()
-      this.form = { title: '', schools: null, organization: null}
+      this.form = { title: ''}
     }
   }
 }

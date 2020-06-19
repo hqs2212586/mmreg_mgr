@@ -5,6 +5,31 @@
       <el-col :span="span">
         <!--表格渲染-->
         <tree-table v-loading="loading" :data="grades" :columns="columns" :expand-all="true" border size="small">
+          <el-table-column label="所属学校" width="160px">
+            <template slot-scope="scope">
+              <span>{{schoolDict[scope.row.schools]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="开始日期" width="175px">
+            <template slot-scope="scope">
+              <span>{{parseTime(scope.row.begin_time)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="结束日期" width="175px">
+            <template slot-scope="scope">
+              <span>{{parseTime(scope.row.end_time)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="创建时间" width="175px">
+            <template slot-scope="scope">
+              <span>{{parseTime(scope.row.add_time)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="更新时间" width="175px">
+            <template slot-scope="scope">
+              <span>{{parseTime(scope.row.modify_time)}}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="150px" align="center">
             <template slot-scope="scope">
               <edit v-if="checkPermission(['admin','grade_all','grade_edit'])" :grades="grades" :schoolList="schoolList" :data="scope.row" :sup_this="sup_this"/>
@@ -54,38 +79,20 @@ export default {
         {
           text: '名称',
           value: 'title'
-        },
-        // {
-        //   text: '学校',
-        //   value: 'schools'
-        // },
-        {
-          text: '开始日期',
-          value: 'begin_time'
-        },
-        {
-          text: '结束日期',
-          value: 'end_time'
-        },
-        // {
-        //   text: '创建时间',
-        //   value: 'add_time'
-        // },
-        // {
-        //   text: '更新时间',
-        //   value: 'modify_time'
-        // }
+        }
       ],
       span: 24,
       delLoading: false,
       sup_this: this,
       grades: [],
       gradeList: [],
-      schoolList: []
+      schoolList: [],
+      schoolDict: {}
     }
   },
   created() {
     this.getSchoolList();
+    this.getGradeList();
     this.$nextTick(() => {
       this.init(
         this.size = 100
@@ -136,13 +143,15 @@ export default {
       })
     },
     getSchoolList() {
-      let self = this;
       getSchools().then(res => {
-        const newres = res.results.map(item => {
-          return { ...item, label: item.title }
-        })
-        self.schoolList = newres;
-        self.getGradeList()
+        let newres = {};
+        const newList = res.results.map(item => {
+          newres[item.id] = item.title;
+          return { ...item, label: item.title}
+        });
+        console.log(newres);     // {2: "三峡大学", 4: "阿达萨多"}
+        this.schoolDict = newres;
+        this.schoolList = newList;
       })
     },
     getGradeList() {
@@ -150,22 +159,6 @@ export default {
       getGrades().then(res => {
         console.log(self.schoolList);
         self.grades = res.results;
-        self.gradeList = JSON.parse(JSON.stringify(self.grades));
-
-        // 为了将学校的id转为名称
-        for (var i=0; i < self.gradeList.length; i++) {
-          for (var j=0; j < self.schoolList.length; j++) {
-            if (self.gradeList[i].schools === self.schoolList[j].id) {
-              self.gradeList[i].schools = self.schoolList[j].title
-            }
-          }
-          self.gradeList[i].begin_time = self.parseTime(self.gradeList[i].begin_time);
-          self.gradeList[i].end_time = self.parseTime(self.gradeList[i].end_time);
-          self.gradeList[i].add_time = self.parseTime(self.gradeList[i].add_time);
-          self.gradeList[i].modify_time = self.parseTime(self.gradeList[i].modify_time);
-        }
-        console.log('#####', self.grades);
-        console.log(self.gradeList)
       })
     }
   }

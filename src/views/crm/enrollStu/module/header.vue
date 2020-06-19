@@ -12,8 +12,18 @@
         type="primary"
         icon="el-icon-plus"
         @click="$refs.form.dialog = true">新增</el-button>
-      <eForm ref="form" :enroll_students="enroll_students" :is-add="true"/>
+      <eForm ref="form" :enroll_students="enroll_students" :gradesList="gradesList"
+             :siteList="siteList" :traintypeList="traintypeList" :is-add="true"/>
     </div>
+    <!-- 导出 -->
+    <el-button
+      v-if="checkPermission(['admin','enrollstu_all'])"
+      :loading="downloadLoading"
+      size="mini"
+      class="filter-item"
+      type="primary"
+      icon="el-icon-download"
+      @click="download">导出</el-button>
   </div>
 </template>
 
@@ -30,6 +40,18 @@ export default {
     enroll_students: {
       type: Array,
       required: true
+    },
+    siteList: {
+      type: Array,
+      required: true
+    },
+    gradesList: {
+      type: Array,
+      required: true
+    },
+    traintypeList: {
+      type: Array,
+      required: true
     }
   },
   data() {
@@ -43,6 +65,30 @@ export default {
       console.log(this.query)
       this.$parent.page = 1
       this.$parent.init()
+    },
+    download() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['ID', '姓名', '性别', '民族']
+        const filterVal = ['id', 'name', 'gender', 'nation']
+        const data = this.formatJson(filterVal, this.$parent.data)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: 'table-list'
+        })
+        this.downloadLoading = false
+      })
+    },
+    // 数据转换
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'gender') {
+          return v[j] ? '女' : '男'
+        } else {
+          return v[j]
+        }
+      }))
     }
   }
 }

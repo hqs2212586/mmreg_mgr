@@ -1,13 +1,31 @@
 <template>
   <div class="app-container">
-    <eHeader :sites="sites" :organizations="organizations" :schoolList="schoolList" :query="query"/>
+    <eHeader :sites="sites" :organizations="organizations"
+             :schoolList="schoolList" :query="query"/>
     <el-row :gutter="28">
       <el-col :span="span">
         <!--表格渲染-->
         <tree-table v-loading="loading" :data="sites" :expand-all="true" :columns="columns" border size="small">
+          <el-table-column label="所属学校" width="175px">
+            <template slot-scope="scope">
+              <span>{{schoolDict[scope.row.schools]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="创建时间" width="175px">
+            <template slot-scope="scope">
+              <span>{{parseTime(scope.row.add_time)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="更新时间" width="175px">
+            <template slot-scope="scope">
+              <span>{{parseTime(scope.row.modify_time)}}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="150px" align="center">
             <template slot-scope="scope">
-              <edit v-if="checkPermission(['admin','site_all','site_edit'])" :sites="sites" :data="scope.row" :organizations="organizations" :schoolList="schoolList" :sup_this="sup_this"/>
+              <edit v-if="checkPermission(['admin','site_all','site_edit'])"
+                    :sites="sites" :data="scope.row" :organizations="organizations"
+                    :schoolList="schoolList" :sup_this="sup_this"/>
               <el-popover
                 v-if="checkPermission(['admin','site_all','site_delete'])"
                 :ref="scope.row.id"
@@ -63,22 +81,15 @@ export default {
         // {
         //   text: '组织层级',
         //   value: 'organization'
-        // },
-        {
-          text: '创建时间',
-          value: 'add_time'
-        },
-        {
-          text: '更新时间',
-          value: 'modify_time'
-        }
+        // }
       ],
       span: 24,
       delLoading: false,
       sup_this: this,
       sites: [],
       organizations: [],
-      schoolList: []
+      schoolList: [],
+      schoolDict: {}
     }
   },
   created() {
@@ -130,28 +141,26 @@ export default {
     getSiteList() {
       let self = this;
       getSites().then(res => {
-        for (var i=0; i < res.results.length; i++) {
-          res.results[i].add_time = self.parseTime(res.results[i].add_time)
-          res.results[i].modify_time = self.parseTime(res.results[i].modify_time)
-        }
-        console.log(res);
         self.sites = res.results;
       })
     },
     getOrganizations() {
       getOrganizationTree().then(res => {
-        this.organizations = res.detail
+        this.organizations = res.detail;
       })
     },
     getSchoolList() {
       getSchools().then(res => {
-        const newres = res.results.map(item => {
-          return { ...item, label: item.title }
-        })
-        console.log(newres);
-        this.schoolList = newres
+        let newres = {};
+        const newList = res.results.map(item => {
+          newres[item.id] = item.title;
+          return { ...item, label: item.title}
+        });
+        console.log(newres);     // {2: "三峡大学", 4: "阿达萨多"}
+        this.schoolDict = newres;
+        this.schoolList = newList;
       })
-    },
+    }
   }
 }
 </script>

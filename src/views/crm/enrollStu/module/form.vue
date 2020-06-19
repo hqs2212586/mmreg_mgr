@@ -28,7 +28,15 @@
       <el-form-item label="报读专业" prop="majors">
         <el-input v-model="form.majors" style="width: 370px;"/>
       </el-form-item>
-
+      <el-form-item label="培养层次">
+        <treeselect v-model="form.train_types" :options="traintypeList" style="width: 370px;" placeholder="请选择招生批次" />
+      </el-form-item>
+      <el-form-item label="招生批次">
+        <treeselect v-model="form.grades" :options="gradesList" style="width: 370px;" placeholder="请选择招生批次" />
+      </el-form-item>
+      <el-form-item label="所属站点">
+        <treeselect v-model="form.sites" :options="siteList" style="width: 370px;" placeholder="请选择所属站点" />
+      </el-form-item>
       <el-form-item label="备注" prop="memo">
         <el-input v-model="form.memo" style="width: 370px;"/>
       </el-form-item>
@@ -60,6 +68,18 @@ export default {
     enroll_students: {
       type: Array,
       required: true
+    },
+    siteList: {
+      type: Array,
+      required: true
+    },
+    gradesList: {
+      type: Array,
+      required: true
+    },
+    traintypeList: {
+      type: Array,
+      required: true
     }
   },
   data() {
@@ -68,13 +88,16 @@ export default {
       dialog: false,
       form: {
         name: '',
-        gender: 0,
+        gender: null,
         nation: '',
         birth_place: '',
         identity_num: '',
         address: '',
         tel: '',
-        majors: '',
+        majors: null,
+        train_types: null,
+        grades: null,
+        sites:null,
         memo: ''
       },
       rules: {

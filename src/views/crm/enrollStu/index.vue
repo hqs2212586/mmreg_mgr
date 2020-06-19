@@ -1,13 +1,55 @@
 <template>
   <div class="app-container">
-    <eHeader :enroll_students="enroll_students" :query="query"/>
+    <eHeader :enroll_students="enroll_students" :gradesList="gradesList"
+             :siteList="siteList" :traintypeList="traintypeList" :query="query"/>
     <el-row :gutter="28">
       <el-col :span="span">
         <!--表格渲染-->
         <tree-table v-loading="loading" :data="enroll_students" :expand-all="true" :columns="columns" border size="small">
+          <el-table-column label="身份证" width="142px">
+            <template slot-scope="scope">
+              <span>{{scope.row.identity_num}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="培养类型" width="80px">
+            <template slot-scope="scope">
+              <span>{{traintypeDict[scope.row.train_types]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属站点" width="100px">
+            <template slot-scope="scope">
+              <span>{{siteDict[scope.row.sites]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="备注" width="100px">
+            <template slot-scope="scope">
+              <span>{{scope.row.memo}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="招生批次" width="100px">
+            <template slot-scope="scope">
+              <span>{{gradesDict[scope.row.grades]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" width="60px">
+            <template slot-scope="scope">
+              <span>{{statusDict[scope.row.student_status]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="创建时间" width="163px">
+            <template slot-scope="scope">
+              <span>{{parseTime(scope.row.add_time)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="更新时间" width="163px">
+            <template slot-scope="scope">
+              <span>{{parseTime(scope.row.modify_time)}}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="150px" align="center">
             <template slot-scope="scope">
               <edit v-if="checkPermission(['admin','enrollstu_all','enrollstu_edit'])" :enroll_students="enroll_students"
+                    :gradesList="gradesList" :siteList="siteList" :traintypeList="traintypeList"
                     :data="scope.row" :sup_this="sup_this"/>
               <el-popover
                 v-if="checkPermission(['admin','enrollstu_all','enrollstu_delete'])"
@@ -44,6 +86,10 @@ import { del, getEnrollStudents } from '@/api/enroll_stu'
 import { parseTime } from '@/utils/index'
 import eHeader from './module/header'
 import edit from './module/edit'
+import { getGrades } from '@/api/grade'
+import { getSites } from '@/api/site'
+import { getTrainType } from '@/api/train_type'
+
 
 export default {
   components: { eHeader, edit, treeTable },
@@ -56,42 +102,33 @@ export default {
           value: 'name'
         },
         {
-          text: '民族',
-          value: 'nation'
-        },
-        {
-          text: '籍贯',
-          value: 'birth_place'
-        },
-        {
-          text: '身份证号',
-          value: 'identity_num'
-        },
-        {
-          text: '常用地址',
-          value: 'address'
-        },
-        {
-          text: '手机号',
-          value: 'tel'
-        },
-        {
           text: '报读专业',
           value: 'majors'
         },
-        {
-          text: '备注',
-          value: 'memo'
-        }
       ],
       span: 24,
       delLoading: false,
       sup_this: this,
-      enroll_students: []
+      enroll_students: [],
+      siteList: [],
+      siteDict: {},
+      traintypeList: [],
+      traintypeDict: {},
+      gradesDict: {},
+      gradesList: [],
+      statusDict: {
+        '0': "未审核",
+        '1': "审核通过",
+        '2': "审核拒绝",
+        '3': "重复"
+      }
     }
   },
   created() {
     this.getEnrollStudentList();
+    this.getSiteList();
+    this.getGradeList();
+    this.getTrainTypeList();
     this.$nextTick(() => {
       this.init(
         this.size = 100
@@ -137,12 +174,44 @@ export default {
     getEnrollStudentList() {
       let self = this;
       getEnrollStudents().then(res => {
-        for (var i=0; i < res.results.length; i++) {
-          res.results[i].add_time = self.parseTime(res.results[i].add_time)
-          res.results[i].modify_time = self.parseTime(res.results[i].modify_time)
-        }
-        console.log(res);
         self.enroll_students = res.results;
+      })
+    },
+    // 获取批次、年级
+    getGradeList() {
+      let self = this;
+      getGrades().then(res => {
+        let newres = {};
+        const newList = res.results.map(item => {
+          newres[item.id] = item.title;
+          return { ...item, label: item.title}
+        });
+        this.gradesDict = newres;
+        this.gradesList = newList;
+      })
+    },
+    // 获取站点信息
+    getSiteList() {
+      getSites().then(res => {
+        let newres = {};
+        const newList = res.results.map(item => {
+          newres[item.id] = item.title;
+          return { ...item, label: item.title}
+        });
+        this.siteDict = newres;
+        this.siteList = newList;
+      })
+    },
+    // 培养类型
+    getTrainTypeList() {
+      getTrainType().then(res => {
+        let newres = {};
+        const newList = res.results.map(item => {
+          newres[item.id] = item.title;
+          return { ...item, label: item.title}
+        });
+        this.traintypeDict = newres;
+        this.traintypeList = newList;
       })
     }
   }

@@ -1,8 +1,7 @@
 <template>
   <div>
     <el-button size="mini" type="success" @click="to">编辑</el-button>
-    <eForm ref="form" :sites="sites" :organizations="organizations"
-           :schoolList="schoolList" :sup_this="sup_this" :is-add="false"/>
+    <eForm ref="form" :train_types="train_types" :sup_this="sup_this" :is-add="false"/>
   </div>
 </template>
 <script>
@@ -18,15 +17,7 @@ export default {
       type: Object,
       required: true
     },
-    sites: {
-      type: Array,
-      required: true
-    },
-    organizations: {
-      type: Array,
-      required: true
-    },
-    schoolList: {
+    train_types: {
       type: Array,
       required: true
     }
@@ -36,9 +27,7 @@ export default {
       const _this = this.$refs.form
       _this.form = {
         id: this.data.id,
-        title: this.data.title,
-        schools: this.data.schools,
-        organization: this.data.organization
+        title: this.data.title
       }
       _this.dialog = true
     }

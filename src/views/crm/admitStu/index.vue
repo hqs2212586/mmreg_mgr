@@ -1,31 +1,15 @@
 <template>
   <div class="app-container">
-    <eHeader :schools="schools" :query="query"/>
+    <eHeader :train_types="train_types" :query="query"/>
     <el-row :gutter="28">
       <el-col :span="span">
         <!--表格渲染-->
-        <tree-table v-loading="loading" :data="schools" :expand-all="true" :columns="columns" border size="small">
-          <el-table-column label="学校logo" width="150px">
-            <template slot-scope="scope">
-              <img :src="scope.row.logo" class="el-avatar">
-            </template>
-          </el-table-column>
-          <el-table-column label="创建时间" width="163px">
-            <template slot-scope="scope">
-              <span>{{parseTime(scope.row.add_time)}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="更新时间" width="163px">
-            <template slot-scope="scope">
-              <span>{{parseTime(scope.row.modify_time)}}</span>
-            </template>
-          </el-table-column>
+        <tree-table v-loading="loading" :data="train_types" :expand-all="true" :columns="columns" border size="small">
           <el-table-column label="操作" width="150px" align="center">
             <template slot-scope="scope">
-              <edit v-if="checkPermission(['admin','school_all','school_edit'])"
-                    :schools="schools" :data="scope.row" :sup_this="sup_this"/>
+              <edit v-if="checkPermission(['admin','admitstu_all','admitstu_edit'])" :train_types="train_types" :data="scope.row" :sup_this="sup_this"/>
               <el-popover
-                v-if="checkPermission(['admin','school_all','school_delete'])"
+                v-if="checkPermission(['admin','admitstu_all','admitstu_delete'])"
                 :ref="scope.row.id"
                 placement="top"
                 width="200">
@@ -55,10 +39,11 @@
 import checkPermission from '@/utils/permission' // 权限判断函数
 import treeTable from '@/components/TreeTable'
 import initData from '@/mixins/initData'
-import { del, getSchools } from '@/api/school'
+import { del, getTrainType } from '@/api/train_type'
 import { parseTime } from '@/utils/index'
 import eHeader from './module/header'
 import edit from './module/edit'
+
 export default {
   components: { eHeader, edit, treeTable },
   mixins: [initData],
@@ -66,18 +51,26 @@ export default {
     return {
       columns: [
         {
-          text: '学校名称',
+          text: '名称',
           value: 'title'
+        },
+        {
+          text: '创建时间',
+          value: 'add_time'
+        },
+        {
+          text: '更新时间',
+          value: 'modify_time'
         }
       ],
       span: 24,
       delLoading: false,
       sup_this: this,
-      schools: []
+      train_types: []
     }
   },
   created() {
-    this.getSchoolList()
+    this.getTrainTypeList();
     this.$nextTick(() => {
       this.init(
         this.size = 100
@@ -94,7 +87,7 @@ export default {
       // this.table_show = false
     },
     beforeInit() {
-      this.url = 'api/crm/schools/'
+      this.url = 'api/crm/train_types/'
       const sort = 'id'
       const query = this.query
       const value = query.value
@@ -120,10 +113,15 @@ export default {
         console.log(err)
       })
     },
-    getSchoolList() {
+    getTrainTypeList() {
       let self = this;
-      getSchools().then(res => {
-        self.schools = res.results;
+      getTrainType().then(res => {
+        for (var i=0; i < res.results.length; i++) {
+          res.results[i].add_time = self.parseTime(res.results[i].add_time)
+          res.results[i].modify_time = self.parseTime(res.results[i].modify_time)
+        }
+        console.log(res);
+        self.train_types = res.results;
       })
     }
   }
