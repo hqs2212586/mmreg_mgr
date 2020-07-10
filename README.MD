@@ -15,12 +15,12 @@
 
     安装前端项目依赖包
 
-    cd xops_qd/
+    cd mmreg_mgr
     npm install
 
 2、修改你的配置文件
 
-    xops_qd/config
+    mmreg_mgr/config
     dev.env.js #开发环境
     prod.env.js #生成环境
 
@@ -35,31 +35,31 @@
 
 ```vue
 <el-form ref="form" :model="form" :rules="rules" size="small" label-width="66px">
-      <el-form-item label="名称" prop="title">
-        <el-input v-model="form.title" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="Logo" prop="logo">
-        <el-upload
-          action=""
-          :limit="1"
-          :file-list="fileListAdd"
-          :auto-upload="false"
-          list-type="picture-card"
-          :on-change="handleLogoChange"
-          :on-preview="handleLogoPreview"
-          :on-remove="handleRemove"
-          :class="{'hide': hideUploadAdd}"
-          >
-          <i class="el-icon-plus"></i>
-        </el-upload>
-        <el-dialog :visible.sync="dialogVisible">
-          <img width="100%" :src="dialogImageUrl" alt="">
-        </el-dialog>
-      </el-form-item>
-      <el-form-item style="margin-bottom: 0px;" label="组织">
-        <treeselect v-model="form.organization" :options="organizations" style="width: 360px;" placeholder="请选择组织架构" />
-      </el-form-item>
-    </el-form>
+  <el-form-item label="名称" prop="title">
+    <el-input v-model="form.title" style="width: 370px;"/>
+  </el-form-item>
+  <el-form-item label="Logo" prop="logo">
+    <el-upload
+      action=""
+      :limit="1"
+      :file-list="fileListAdd"
+      :auto-upload="false"
+      list-type="picture-card"
+      :on-change="handleLogoChange"
+      :on-preview="handleLogoPreview"
+      :on-remove="handleRemove"
+      :class="{'hide': hideUploadAdd}"
+      >
+      <i class="el-icon-plus"></i>
+    </el-upload>
+    <el-dialog :visible.sync="dialogVisible">
+      <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
+  </el-form-item>
+  <el-form-item style="margin-bottom: 0px;" label="组织">
+    <treeselect v-model="form.organization" :options="organizations" style="width: 360px;" placeholder="请选择组织架构" />
+  </el-form-item>
+</el-form>
 ```
 
 

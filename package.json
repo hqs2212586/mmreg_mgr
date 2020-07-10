@@ -1,9 +1,9 @@
 {
-  "name": "xops-qt",
+  "name": "mmreg_mgr",
   "version": "1.2.0",
   "license": "Apache License 2.0",
-  "description": "xops 前端代码",
-  "author": "xufqing",
+  "description": "mmreg 前端代码",
+  "author": "huangqs",
   "scripts": {
     "dev": "cross-env BABEL_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "build": "cross-env NODE_ENV=production env_config=prod node build/build.js",
@@ -82,7 +82,7 @@
     "webpack": "4.16.5",
     "webpack-bundle-analyzer": "2.13.1",
     "webpack-cli": "3.1.0",
-    "webpack-dev-server": "^3.4.1",
+    "webpack-dev-server": ">=3.1.11",
     "webpack-merge": "4.1.4"
   },
   "engines": {

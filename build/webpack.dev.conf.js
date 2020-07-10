@@ -44,7 +44,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {
       poll: config.dev.poll
-    }
+    },
+    // 处理Invalid Host/Origin header，[WDS] Disconnected!报错
+    disableHostCheck: true
   },
   plugins: [
     new webpack.DefinePlugin({
