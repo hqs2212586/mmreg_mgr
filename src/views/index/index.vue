@@ -48,13 +48,12 @@
   // https://github.com/PanJiaChen/vue-element-admin/blob/master/src/views/dashboard/admin/index.vue
   import GithubCorner from '@/components/GithubCorner'
   import PanelGroup from '@/components/Chart/PanelGroup'
-  import LineChart from './components/Chart/LineChart'
-  import RaddarChart from './components/Chart/RaddarChart'
-  import PieChart from './components/Chart/PieChart'
-  import BarChart from './components/Chart/BarChart'
-  import TransactionTable from './components/Chart/TransactionTable'
-  import TodoList from './components/Chart/TodoList'
-  import BoxCard from './components/Chart/BoxCard'
+  import LineChart from '@/components/Chart/LineChart'
+  import RaddarChart from '@/components/Chart/RaddarChart'
+  import PieChart from '@/components/Chart/PieChart'
+  import BarChart from '@/components/Chart/BarChart'
+  import TodoList from '@/components/TodoList'
+  import BoxCard from '@/components/Chart/BoxCard'
   const lineChartData = {
     newVisitis: {
       expectedData: [100, 120, 161, 134, 105, 160, 165],
@@ -82,7 +81,6 @@
       RaddarChart,
       PieChart,
       BarChart,
-      TransactionTable,
       TodoList,
       BoxCard
     },
