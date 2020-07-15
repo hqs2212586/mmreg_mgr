@@ -1,9 +1,5 @@
 <template>
   <div class="dashboard-container">
-    <el-alert :closable="false" title="首页" type="success">
-      <router-view />
-    </el-alert>
-
     <github-corner class="github-corner" />
 
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
