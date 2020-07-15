@@ -24,6 +24,18 @@
       type="primary"
       icon="el-icon-download"
       @click="download">导出</el-button>
+    <!-- 导入 -->
+    <el-upload
+      v-if="checkPermission(['admin', 'enrollstu_all'])"
+      class="filter-item"
+      action=""
+      :on-change="handleExcelImport"
+      :show-file-list="false"
+      :file-list="fileListUpload"
+      :limit="1">
+      <el-button size="mini" :loading="uploadLoading"
+        type="primary" icon="el-icon-upload">导入</el-button>
+    </el-upload>
   </div>
 </template>
 
@@ -56,7 +68,10 @@ export default {
   },
   data() {
     return {
-      downloadLoading: false
+      downloadLoading: false,
+      uploadLoading: false,
+      fileTemp: null,     // 上传的临时文件
+      fileListUpload: []
     }
   },
   methods: {
@@ -67,18 +82,22 @@ export default {
       this.$parent.init()
     },
     download() {
-      this.downloadLoading = true
+      this.downloadLoading = true;
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['ID', '姓名', '性别', '民族']
-        const filterVal = ['id', 'name', 'gender', 'nation']
-        const data = this.formatJson(filterVal, this.$parent.data)
+        const tHeader = ['ID', '姓名', '性别', '民族'];
+        const filterVal = ['id', 'name', 'gender', 'nation'];
+        const data = this.formatJson(filterVal, this.$parent.data);
         excel.export_json_to_excel({
           header: tHeader,
           data,
           filename: 'table-list'
-        })
+        });
         this.downloadLoading = false
       })
+    },
+    handleExcelImport (file) {
+      this.fileTemp = file.raw;
+
     },
     // 数据转换
     formatJson(filterVal, jsonData) {
