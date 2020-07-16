@@ -33,6 +33,7 @@
 import checkPermission from '@/utils/permission' // 权限判断函数
 import { getOrganizationUserTree } from '@/api/organization'
 import eForm from './form'
+
 // 查询条件
 export default {
   components: { eForm },
@@ -64,8 +65,8 @@ export default {
     checkPermission,
     // 去查询
     toQuery() {
-      this.$parent.page = 1
-      this.$parent.init()
+      this.$parent.page = 1;
+      this.$parent.init();
     },
     // 导出
     getOrgUserTree() {
@@ -74,16 +75,16 @@ export default {
       })
     },
     download() {
-      this.downloadLoading = true
+      this.downloadLoading = true;
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['ID', '用户名', '邮箱', '头像地址', '状态', '注册日期', '最后修改密码日期']
-        const filterVal = ['id', 'username', 'email', 'avatar', 'is_active', 'createTime', 'lastPasswordResetTime']
-        const data = this.formatJson(filterVal, this.$parent.data)
+        const tHeader = ['ID', '用户名', '邮箱', '头像地址', '状态', '注册日期', '最后修改密码日期'];
+        const filterVal = ['id', 'username', 'email', 'avatar', 'is_active', 'createTime', 'lastPasswordResetTime'];
+        const data = this.formatJson(filterVal, this.$parent.data);
         excel.export_json_to_excel({
           header: tHeader,
           data,
           filename: 'table-list'
-        })
+        });
         this.downloadLoading = false
       })
     },

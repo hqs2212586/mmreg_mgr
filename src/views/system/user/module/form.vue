@@ -50,9 +50,13 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item style="margin-bottom: 0px;" label="角色">
-        <treeselect v-model="roleIds" :multiple="true" :options="roles" style="width: 360px;" placeholder="请选择角色" />
-      </el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="角色">
+            <treeselect v-model="roleIds" :multiple="true" :options="roles" style="width: 300px;" placeholder="请选择角色" />
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
@@ -66,6 +70,7 @@ import { add, edit } from '@/api/user'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { isvalidPhone } from '@/utils/validate'
+
 var validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error('请输入手机号码'))
@@ -74,7 +79,8 @@ var validPhone = (rule, value, callback) => {
   } else {
     callback()
   }
-}
+};
+
 export default {
   name: 'Form',
   components: { Treeselect },
@@ -158,7 +164,8 @@ export default {
           duration: 2500
         })
         this.loading = false
-        this.$parent.$parent.init()
+        this.$parent.$parent.init();
+
       }).catch(err => {
         this.loading = false
         console.log(err)

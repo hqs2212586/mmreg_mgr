@@ -58,6 +58,7 @@ import { parseTime } from '@/utils/index'
 import eHeader from './module/header'
 import edit from './module/edit'
 import updatePass from './module/updatePass'
+
 export default {
   components: { eHeader, edit, updatePass },
   mixins: [initData],
@@ -69,22 +70,23 @@ export default {
   created() {
     this.getRoleALL()
     this.getOrganizations()
+    // 延迟执行一段代码
     this.$nextTick(() => {
-      this.init()
+      this.init();
     })
   },
   methods: {
     parseTime,
     checkPermission,
     beforeInit() {
-      this.url = 'api/users/'
-      const sort = 'id'
-      const query = this.query
-      const value = query.value
-      const is_active = query.is_active
-      this.params = { page: this.page, size: this.size, ordering: sort }
-      if (is_active !== '' && is_active !== null) { this.params['is_active'] = is_active }
-      if (value) { this.params['search'] = value }
+      this.url = 'api/users/';
+      const sort = 'id';
+      const query = this.query;
+      const value = query.value;
+      const is_active = query.is_active;
+      this.params = { page: this.page, size: this.size, ordering: sort };
+      if (is_active !== '' && is_active !== null) { this.params['is_active'] = is_active };
+      if (value) { this.params['search'] = value };
       return true
     },
     subDelete(id) {
@@ -108,6 +110,7 @@ export default {
     getOrganizations() {
       getOrganizationTree().then(res => {
         this.organizations = res.detail
+        console.log(this.organizations);
       })
     },
     getRoleALL() {
