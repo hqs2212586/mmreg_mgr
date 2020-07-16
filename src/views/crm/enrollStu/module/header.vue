@@ -81,6 +81,7 @@ export default {
       this.$parent.page = 1
       this.$parent.init()
     },
+    // 导出/下载
     download() {
       this.downloadLoading = true;
       import('@/vendor/Export2Excel').then(excel => {
@@ -95,6 +96,7 @@ export default {
         this.downloadLoading = false
       })
     },
+    // 导入
     handleExcelImport (file) {
       this.fileTemp = file.raw;
 

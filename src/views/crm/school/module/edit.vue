@@ -22,6 +22,10 @@ export default {
       required: true
     }
   },
+  mounted() {
+    console.log(this.schools);
+    console.log(this.data);
+  },
   methods: {
     to() {
       const _this = this.$refs.form;
@@ -30,9 +34,11 @@ export default {
         title: this.data.title,
         logo: this.data.logo,
         organization: this.data.organization
-      }
+      };
+      let obj = new Object();
+      obj.url = this.data.logo;
+      _this.fileListAdd.push(obj);
       _this.dialog = true;
-
     }
   }
 }

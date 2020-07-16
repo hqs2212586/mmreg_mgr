@@ -89,7 +89,7 @@ export default {
     doSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           if (this.isAdd) {
             this.doAdd()
           } else this.doEdit()
@@ -111,23 +111,24 @@ export default {
       });
       add(formData).then(res => {
         console.log('上传', res);
-        this.resetForm()
+        this.resetForm();
         this.$message({
           showClose: true,
           type: 'success',
           message: '添加成功!',
           duration: 2500
-        })
-        this.loading = false
-        this.$parent.$parent.init()
+        });
+        this.loading = false;
+        this.$parent.$parent.init();
       }).catch(err => {
-        this.loading = false
+        this.loading = false;
         console.log(err)
       })
     },
     doEdit() {
       let self = this;
       let formData = new FormData();
+      console.log(this.form);
       for (let key in this.form) {
         if (this.form[key] != null) {     // 抛出为null的logo字段
           formData.append(key, this.form[key]);
@@ -179,8 +180,8 @@ export default {
       this.dialogVisible = true;
     },
     resetForm() {
-      this.dialog = false
-      this.$refs['form'].resetFields()
+      this.dialog = false;
+      this.$refs['form'].resetFields();
       this.form = { title: '', logo: null, organization: null}
     }
   }
