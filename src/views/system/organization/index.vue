@@ -59,7 +59,8 @@ export default {
     }
   },
   created() {
-    this.getOrganizations()
+
+    this.getOrganizations();
     this.$nextTick(() => {
       this.init(
         this.size = 100
@@ -96,8 +97,10 @@ export default {
         console.log(err)
       })
     },
+    // 查看组织树
     getOrganizations() {
       getOrganizationTree().then(res => {
+        console.log(res);
         this.organizations = res.detail
       })
     }

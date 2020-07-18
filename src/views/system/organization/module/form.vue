@@ -9,8 +9,11 @@
           <el-option v-for="item in types" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
+      <!--只有两级组织架构，因此不需要显示站点-->
       <el-form-item style="margin-bottom: 0px;" label="父级组织">
-        <treeselect v-model="form.pid" :options="organizations" style="width: 360px;" placeholder="请选择父级组织" />
+        <el-select v-model="form.pid" style="width: 360px;" placeholder="请选择父级组织" :disabled="input_status">
+          <el-option v-for="item in organizations" :key="item.id" :label="item.label" :value="item.id" />
+        </el-select>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -22,14 +25,16 @@
 
 <script>
 import { add, edit } from '@/api/organization'
-import Treeselect from '@riophae/vue-treeselect'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+// import Treeselect from '@riophae/vue-treeselect'
+// import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
 export default {
-  components: { Treeselect },
+  // components: { Treeselect },
   props: {
     organizations: {
       type: Array,
-      required: true
+      required: true,
+
     },
     isAdd: {
       type: Boolean,
@@ -49,8 +54,25 @@ export default {
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' }
         ]
+      },
+      input_status: true     // 默认不能选择父级组织
+    }
+  },
+  watch: {
+    'form.type': {
+      handler(val) {
+        let self = this;
+        console.log(val);
+        if (val === 'site') {    // site必须选择父级组织
+          self.input_status = false;
+        } else if (val === 'school') {    // school不能选父级组织
+          self.input_status = true;
+        }
       }
     }
+  },
+  mounted() {
+    console.log(this.organizations);
   },
   methods: {
     cancel() {
