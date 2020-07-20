@@ -10,8 +10,8 @@
         </el-select>
       </el-form-item>
       <!--只有两级组织架构，因此不需要显示站点-->
-      <el-form-item style="margin-bottom: 0px;" label="父级组织">
-        <el-select v-model="form.pid" style="width: 360px;" placeholder="请选择父级组织" :disabled="input_status">
+      <el-form-item style="margin-bottom: 0px;" label="学校组织">
+        <el-select v-model="form.pid" style="width: 360px;" placeholder="请选择学校组织" :disabled="input_status">
           <el-option v-for="item in organizations" :key="item.id" :label="item.label" :value="item.id" />
         </el-select>
       </el-form-item>
@@ -25,16 +25,12 @@
 
 <script>
 import { add, edit } from '@/api/organization'
-// import Treeselect from '@riophae/vue-treeselect'
-// import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
-  // components: { Treeselect },
   props: {
     organizations: {
       type: Array,
-      required: true,
-
+      required: true
     },
     isAdd: {
       type: Boolean,
@@ -81,10 +77,12 @@ export default {
     doSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           if (this.isAdd) {
-            this.doAdd()
-          } else this.doEdit()
+            this.doAdd();
+          } else {
+            this.doEdit();
+          }
         } else {
           return false
         }
@@ -92,42 +90,42 @@ export default {
     },
     doAdd() {
       add(this.form).then(res => {
-        this.resetForm()
+        this.resetForm();
         this.$message({
           showClose: true,
           type: 'success',
           message: '添加成功!',
           duration: 2500
-        })
-        this.loading = false
-        this.$parent.$parent.init()
-        this.$parent.$parent.getOrganizations()
+        });
+        this.loading = false;
+        this.$parent.$parent.init();
+        this.$parent.$parent.getOrganizations();
       }).catch(err => {
-        this.loading = false
-        console.log(err)
+        this.loading = false;
+        console.log(err);
       })
     },
     doEdit() {
       edit(this.form.id, this.form).then(res => {
-        this.resetForm()
+        this.resetForm();
         this.$message({
           showClose: true,
           type: 'success',
           message: '修改成功!',
           duration: 2500
-        })
-        this.loading = false
-        this.sup_this.init()
-        this.sup_this.getOrganizations()
+        });
+        this.loading = false;
+        this.sup_this.init();
+        this.sup_this.getOrganizations();
       }).catch(err => {
-        this.loading = false
-        console.log(err)
+        this.loading = false;
+        console.log(err);
       })
     },
     resetForm() {
-      this.dialog = false
-      this.$refs['form'].resetFields()
-      this.form = { name: '', type: '', pid: null }
+      this.dialog = false;
+      this.$refs['form'].resetFields();
+      this.form = { name: '', type: '', pid: null };
     }
   }
 }

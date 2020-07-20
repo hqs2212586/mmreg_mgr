@@ -59,6 +59,7 @@ import { del, getSchools } from '@/api/school'
 import { parseTime } from '@/utils/index'
 import eHeader from './module/header'
 import edit from './module/edit'
+
 export default {
   components: { eHeader, edit, treeTable },
   mixins: [initData],
@@ -87,12 +88,6 @@ export default {
   methods: {
     parseTime,
     checkPermission,
-    handleCurrentChange(val) {
-      console.log(val);
-      // this.row_data = val
-      // this.show = true
-      // this.table_show = false
-    },
     beforeInit() {
       this.url = 'api/crm/schools/';
       const sort = 'id';

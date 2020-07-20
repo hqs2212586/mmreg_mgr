@@ -1,8 +1,8 @@
 <template>
   <el-dialog :append-to-body="true" :visible.sync="dialog" :title="isAdd ? '新增学校' : '编辑学校'" width="500px">
-    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="66px">
+    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
       <el-form-item label="名称" prop="title">
-        <el-input v-model="form.title" style="width: 370px;"/>
+        <el-input v-model="form.title" style="width: 360px;"/>
       </el-form-item>
       <el-form-item label="Logo" prop="logo">
         <el-upload
@@ -20,8 +20,10 @@
           <img width="100%" :src="dialogImageUrl" alt="">
         </el-dialog>
       </el-form-item>
-      <el-form-item style="margin-bottom: 0px;" label="组织">
-        <treeselect v-model="form.organization" :options="organizations" style="width: 360px;" placeholder="请选择组织架构" />
+      <el-form-item style="margin-bottom: 0px;" label="组织架构">
+        <el-select v-model="form.organization" style="width: 360px;" placeholder="请选择对应学校组织">
+          <el-option v-for="item in organizations" :key="item.id" :label="item.label" :value="item.id" />
+        </el-select>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -34,12 +36,9 @@
 <script>
 import { add, edit } from '@/api/school'
 import { getToken } from '@/utils/auth'
-import Treeselect from '@riophae/vue-treeselect'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { getOrganizationTree } from '@/api/organization'
 
 export default {
-  components: { Treeselect },
   props: {
     isAdd: {
       type: Boolean,

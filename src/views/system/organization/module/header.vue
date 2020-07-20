@@ -20,6 +20,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import eForm from './form'
+
 export default {
   components: { eForm },
   props: {
@@ -40,9 +41,9 @@ export default {
   methods: {
     checkPermission,
     toQuery() {
-      console.log(this.query)
-      this.$parent.page = 1
-      this.$parent.init()
+      console.log(this.query);
+      this.$parent.page = 1;
+      this.$parent.init();
     }
   }
 }

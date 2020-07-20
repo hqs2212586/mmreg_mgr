@@ -40,6 +40,7 @@ import { getOrganizationTree } from '@/api/organization'
 import { parseTime } from '@/utils/index'
 import eHeader from './module/header'
 import edit from './module/edit'
+
 export default {
   components: { eHeader, edit, treeTable },
   mixins: [initData],
@@ -71,20 +72,22 @@ export default {
     parseTime,
     checkPermission,
     beforeInit() {
-      this.url = 'api/organizations/'
-      const sort = 'id'
-      const query = this.query
-      const value = query.value
-      this.params = { page: this.page, size: this.size, ordering: sort }
-      if (value) { this.params['search'] = value }
+      this.url = 'api/organizations/';
+      const sort = 'id';
+      const query = this.query;
+      const value = query.value;
+      this.params = { page: this.page, size: this.size, ordering: sort };
+      if (value) {
+        this.params['search'] = value
+      }
       return true
     },
     subDelete(id) {
-      this.delLoading = true
+      this.delLoading = true;
       del(id).then(res => {
-        this.delLoading = false
-        this.$refs[id].doClose()
-        this.init()
+        this.delLoading = false;
+        this.$refs[id].doClose();
+        this.init();
         this.$message({
           showClose: true,
           type: 'success',
@@ -92,16 +95,16 @@ export default {
           duration: 2500
         })
       }).catch(err => {
-        this.delLoading = false
-        this.$refs[id].doClose()
-        console.log(err)
+        this.delLoading = false;
+        this.$refs[id].doClose();
+        console.log(err);
       })
     },
     // 查看组织树
     getOrganizations() {
       getOrganizationTree().then(res => {
         console.log(res);
-        this.organizations = res.detail
+        this.organizations = res.detail;
       })
     }
   }
