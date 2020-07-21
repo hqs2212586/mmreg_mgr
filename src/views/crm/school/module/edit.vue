@@ -25,6 +25,7 @@ export default {
   mounted() {
     console.log(this.schools);
     console.log(this.data);
+    this.$refs.form.fileAddList = [];
   },
   methods: {
     to() {
@@ -35,9 +36,11 @@ export default {
         logo: this.data.logo,
         organization: this.data.organization
       };
-      let obj = new Object();
-      obj.url = this.data.logo;
-      _this.fileListAdd.push(obj);
+      if (typeof(this.data.logo) === "string") {
+        let obj = new Object();
+        obj.url = this.data.logo;
+        _this.fileAddList.push(obj);
+      }
       _this.dialog = true;
     }
   }

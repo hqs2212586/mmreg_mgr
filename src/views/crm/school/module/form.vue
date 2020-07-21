@@ -8,7 +8,7 @@
         <el-upload
           action=""
           :limit="1"
-          :file-list="fileListAdd"
+          :file-list="fileAddList"
           :auto-upload="false"
           list-type="picture-card"
           :on-change="handleLogoChange"
@@ -57,7 +57,7 @@ export default {
       dialogImageUrl: '',     // 详情图片地址
       dialogVisible: false,   // 详情图是否可见
       hideUploadAdd: false,
-      fileListAdd: [],
+      fileAddList: [],
       form: {
         title: '',
         logo: null,
@@ -73,6 +73,13 @@ export default {
       }
     }
   },
+  watch: {
+    dialog(val) {
+      if (!val) {   // 值为false时重置fileAddList
+        this.fileAddList = []
+      }
+    }
+  },
   created() {
     this.getOrganizations();
   },
@@ -83,7 +90,8 @@ export default {
       })
     },
     cancel() {
-      this.resetForm()
+      this.resetForm();
+      this.fileAddList = [];
     },
     doSubmit() {
       this.$refs['form'].validate((valid) => {
@@ -105,7 +113,7 @@ export default {
           formData.append(key, this.form[key]);
         }
       }
-      this.fileListAdd.map(item => {      // 给logo键添加文件内容
+      this.fileAddList.map(item => {      // 给logo键添加文件内容
         formData.append('logo', item.raw);
       });
       add(formData).then(res => {
@@ -119,34 +127,38 @@ export default {
         });
         this.loading = false;
         this.$parent.$parent.init();
+        // 刷新页面
+        window.history.go(0);
       }).catch(err => {
         this.loading = false;
-        console.log(err)
+        console.log(err);
       })
     },
     doEdit() {
       let self = this;
       let formData = new FormData();
-      console.log(this.form);
       for (let key in this.form) {
-        if (this.form[key] != null) {     // 抛出为null的logo字段
-          formData.append(key, this.form[key]);
+        if (key !== 'logo') {
+          formData.append(key, self.form[key]);
+        } else {
+          if (typeof(self.fileAddList[0].raw) === 'object') {
+            self.fileAddList.map(item => {      // 给logo键添加文件内容
+              formData.append('logo', item.raw);
+            });
+          }
         }
       }
-      this.fileListAdd.map(item => {      // 给logo键添加文件内容
-        formData.append('logo', item.raw);
-      });
-
       edit(this.form.id, formData).then(res => {
-        this.resetForm()
+        this.resetForm();
         this.$message({
           showClose: true,
           type: 'success',
           message: '修改成功!',
           duration: 2500
-        })
-        this.loading = false
-        this.sup_this.init()
+        });
+        this.loading = false;
+        this.sup_this.init();
+        window.history.go(0);
       }).catch(err => {
         this.loading = false
         console.log(err)
@@ -165,7 +177,7 @@ export default {
         this.$message.error('上传头像图片大小不能超过 2MB!');
       } else {
         console.log(fileList);
-        this.fileListAdd = fileList;
+        this.fileAddList = fileList;
       }
       if (fileList.length > 0) {
         this.hideUploadAdd = true;
@@ -180,9 +192,13 @@ export default {
     },
     resetForm() {
       this.dialog = false;
+      this.fileAddList = [];
       this.$refs['form'].resetFields();
       this.form = { title: '', logo: null, organization: null}
     }
+  },
+  beforeDestroy() {
+
   }
 }
 </script>
