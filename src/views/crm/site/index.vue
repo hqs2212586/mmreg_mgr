@@ -73,15 +73,7 @@ export default {
         {
           text: '站点名称',
           value: 'title'
-        },
-        // {
-        //   text: '学校',
-        //   value: 'schools'
-        // },
-        // {
-        //   text: '组织层级',
-        //   value: 'organization'
-        // }
+        }
       ],
       span: 24,
       delLoading: false,
